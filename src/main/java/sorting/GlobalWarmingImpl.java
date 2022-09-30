@@ -1,6 +1,5 @@
 package sorting;
 
-import javax.swing.text.html.HTMLDocument;
 import java.util.*;
 
 /**
@@ -47,69 +46,41 @@ abstract class GlobalWarming {
     }
 
     /**
-     *
      * @param waterLevel
      * @return the number of entries in altitude matrix that would be above
-     *         the specified waterLevel.
-     *         Warning: this is not the waterLevel given in the constructor/
+     * the specified waterLevel.
+     * Warning: this is not the waterLevel given in the constructor/
      */
     public abstract int nbSafePoints(int waterLevel);
 
 }
 
-
 public class GlobalWarmingImpl extends GlobalWarming {
 
-    class PQIndex{
-        int[] pq;
-        int[] cumulateSum;
-
-        PQIndex(){
-            pq = new int[16];
-        }
-
-        void resize(int size){
-            pq = Arrays.copyOf(pq, size);
-        }
-
-        void add(int level){
-            if (level >= pq.length) resize(2*level);
-            pq[level]++;
-        }
-
-        int[] cumulateSum(){
-            int[] ret = new int[pq.length];
-            int sum = 0;
-            for (int i = 0; i < ret.length; i++) {
-                sum += pq[i];
-                ret[i] = sum;
-            }
-            return ret;
-        }
-
-        int getCumulateLevel(int level){
-            if (cumulateSum == null) cumulateSum = cumulateSum();
-            if (level < 0) return cumulateSum[cumulateSum.length + level];
-            return cumulateSum[level];
-        }
-
-        int[] getCumulateSum(){
-            if (cumulateSum == null) cumulateSum = cumulateSum();
-            return cumulateSum;
-        }
-    }
-
-    PQIndex pq;
+    int[] array;
 
 
     public GlobalWarmingImpl(int[][] altitude) {
         super(altitude);
-        pq = new PQIndex();
-        for (int[] i: altitude) {
-            for (int j: i) {
-                pq.add(j);
+        array = new int[altitude.length * altitude[0].length];
+        int count = 0;
+        for (int[] i : altitude) {
+            for (int j : i) {
+                array[count++] = j;
             }
         }
+        Arrays.sort(array);
+    }
+
+    public int binarySearch(int[] array, int value) {
+        int lo = 0;
+        int hi = array.length;
+        while (lo < hi) {
+            int middle = (lo + hi) / 2;
+            if (array[middle] > value) hi = middle;
+            else lo = middle + 1;
+        }
+        return hi;
     }
 
     /**
@@ -118,20 +89,22 @@ public class GlobalWarmingImpl extends GlobalWarming {
      * @param waterLevel the level of water
      */
     public int nbSafePoints(int waterLevel) {
-        if (waterLevel < 0 ) return pq.getCumulateLevel(-1);
-        if (waterLevel >= pq.getCumulateSum().length) return 0;
-        return pq.getCumulateLevel(-1) - pq.getCumulateLevel(waterLevel);
+        int pos = binarySearch(array, waterLevel);
+        if (pos == array.length) return 0;
+        return array.length - pos;
     }
 
     public static void main(String[] args) {
-        int [][] tab = new int[][] {{1,3,3,1,3},
-                                    {4,2,2,4,5},
-                                    {4,4,1,4,2},
-                                    {1,4,2,3,6},
-                                    {1,1,1,6,3}};
+        int[][] tab = new int[][]{{1, 3, 3, 1, 3},
+                {4, 2, 2, 4, 5},
+                {4, 4, 1, 4, 2},
+                {1, 4, 2, 3, 6},
+                {1, 1, 1, 6, 3}};
         GlobalWarmingImpl gw = new GlobalWarmingImpl(tab);
-        System.out.println(Arrays.toString(gw.pq.getCumulateSum()));
         System.out.println(gw.nbSafePoints(3));
     }
 
 }
+
+
+
