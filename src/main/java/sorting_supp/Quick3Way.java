@@ -2,6 +2,10 @@ package sorting_supp;
 
 import java.util.Arrays;
 
+/**
+ * @author Aperence
+ */
+
 public class Quick3Way {
 
     public static void exchange(Comparable[] array, int i, int j){
@@ -10,6 +14,7 @@ public class Quick3Way {
         array[j] = temp;
     }
 
+    // implementation of a quick sort with 3 ways
     public static void sort(Comparable[] array, int low, int high){
         if (low >=  high) return;
         int lo = low;

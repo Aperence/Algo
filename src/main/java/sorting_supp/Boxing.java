@@ -3,8 +3,16 @@ package sorting_supp;
 import java.util.Arrays;
 import java.util.Random;
 
+
+/**
+ * @author Aperence
+ */
+
 public class Boxing {
 
+    /**
+     * Compare time taken to sort using Boxed values (Integer) and using primitive type (int)
+     */
     public static void main(String[] args) {
         Random rng = new Random();
         int n = 10000000;

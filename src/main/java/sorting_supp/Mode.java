@@ -2,8 +2,12 @@ package sorting_supp;
 
 import java.util.Arrays;
 
+/**
+ * @author Aperence
+ */
 public class Mode {
 
+    // search for the mode of an array
     public static int mode(int[] array){
         // O(nlog(n))
         int[] cpy = Arrays.copyOf(array, array.length);

@@ -1,8 +1,12 @@
 package sorting_supp;
 
-
+/**
+ * @author Aperence
+ */
 public class Insert
 {
+
+    // return the index where value should be inserted
     public static int insert(int[] arr, int value){
         int lo = 0;
         int hi = arr.length;

@@ -1,6 +1,23 @@
 package sorting_supp;
 
+/**
+ * @author Aperence
+ */
+
 public class MatrixSearch {
+
+    /**
+     * search in a nxm matrix where element (i, j) where elements of row and columns are sorted
+     *
+     * such that   (i-1, j) < (i, j) < (i+1, j)
+     * and         (i, j-1) < (i, j) < (i, j+1)
+     *
+     * considering (i,j) is the value at index i,j in the matrix
+     *
+     * @return  the index of the value => if element is at (k, l) return k*m + l
+     *          -1 if element is not in the matrix
+     *
+     */
 
     // return i*(nb_columns) + j
     public static int findIter(int[][] matrix, int value){
