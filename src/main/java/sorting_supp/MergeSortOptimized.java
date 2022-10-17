@@ -3,7 +3,7 @@ package sorting_supp;
 import java.util.Arrays;
 
 /**
- * Hello world!
+ * @author Aperence
  */
 public final class MergeSortOptimized {
 
@@ -38,7 +38,7 @@ public final class MergeSortOptimized {
         } 
 
         int mid = (lo+hi)/2;
-        sortHelp(aux, arr, lo, mid);
+        sortHelp(aux, arr, lo, mid);    // swap aux and arr => mustn't copy the values in merge
         sortHelp(aux, arr, mid+1, hi);
         //if (arr[mid].compareTo(arr[mid+1]) < 0) return;  // is already sorted => can be only done when not interleaving aux and arr
         merge(arr, aux, lo, mid, hi);

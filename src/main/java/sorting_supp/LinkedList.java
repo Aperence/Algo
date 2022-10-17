@@ -1,5 +1,9 @@
 package sorting_supp;
 
+/**
+ * @author Aperence
+ */
+
 public class LinkedList {
 
     Node first;
@@ -59,6 +63,7 @@ public class LinkedList {
         }
     }
 
+    // return an array containing all nodes smaller, pivot and greater than the pivot respectively
     public Node[] partition(Node n){
         Node pivot = n;
         n = n.next;
@@ -78,6 +83,7 @@ public class LinkedList {
         return new Node[]{left, pivot, right};
     }
 
+    // sort a linked list using quick sort
     public Node sort(Node n){
         if (n == null) return null;
         Node[] list = partition(n);
@@ -93,7 +99,7 @@ public class LinkedList {
     public void sort(){
         first = sort(first);
         Node runner = first;
-        runner.previous = null;
+        runner.previous = null; // set the previous pointer of the nodes
         while (runner.next != null){
             runner.next.previous = runner;
             runner = runner.next;

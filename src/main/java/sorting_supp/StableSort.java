@@ -2,6 +2,10 @@ package sorting_supp;
 
 import java.util.Arrays;
 
+/**
+ * @author Aperence
+ */
+
 public class StableSort{
 
     private static class Wrapper implements Comparable{
@@ -50,14 +54,15 @@ public class StableSort{
         sort(array, k+1, hi);
     }
 
+    // implementation of a stable quick sort
     public static void sort( Comparable[] array){
         Wrapper[] ret = new Wrapper[array.length];
         for (int i = 0; i < array.length; i++) {
-            ret[i] = new Wrapper(array[i], i);
+            ret[i] = new Wrapper(array[i], i);  // create array of wrapper
         }
         sort(ret, 0, array.length-1);
         for (int i = 0; i < array.length; i++) {
-            array[i] = ret[i].item;
+            array[i] = ret[i].item;            // copy items back in original array
         }
     }
 

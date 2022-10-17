@@ -2,6 +2,9 @@ package sorting_supp;
 
 import java.util.Arrays;
 
+/**
+ * @author Aperence
+ */
 public class Deck {
 
     int[] values;
@@ -35,6 +38,12 @@ public class Deck {
         return Arrays.toString(values);
     }
 
+    /**
+     * sort a deck when only allowed operations are the following:
+     * 1) swap first and second
+     * 2) push first card to the end of the deck
+     * 3) compare cards
+     */
     public void sort(){
         for (int i = 0; i < size-1; i++) {
             for (int j = 0; j < size-i; j++) {
