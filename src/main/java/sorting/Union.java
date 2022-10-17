@@ -62,7 +62,7 @@ public class Union {
      * Returns the union of the intervals given in parameters.
      * This is the minimal array of (sorted) intervals covering
      * exactly the same points than the intervals in parameter.
-     * 
+     *
      * @param intervals the intervals to unite.
      */
     public static Interval[] union(Interval[] intervals) {
