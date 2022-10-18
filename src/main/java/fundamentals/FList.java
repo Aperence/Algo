@@ -78,9 +78,9 @@ public abstract class FList<A> implements Iterable<A> {
     private static final class Nil<A> extends FList<A> {
         public static final Nil<Object> INSTANCE = new Nil();
 
-        public A head() {return null;}
+        public A head() {throw new IllegalArgumentException();}
 
-        public FList<A> tail() {return null;}
+        public FList<A> tail() {throw new IllegalArgumentException();}
     }
 
     private static final class Cons<A> extends FList<A> {
