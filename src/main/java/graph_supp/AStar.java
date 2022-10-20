@@ -20,11 +20,11 @@ public class AStar{
         int y;
         int f;
         Node parent;
-        Node(int x, int y, int h, int g, graphs.Maze.Node p){this.x = x; this.y = y; this.f = h+g; this.parent = p;};
+        Node(int x, int y, int h, int g, Node p){this.x = x; this.y = y; this.f = h+g; this.parent = p;};
 
         @Override
         public int compareTo(Object o) {
-            return f - ((graphs.Maze.Node) o).f ;
+            return f - ((Node) o).f ;
         }
 
         @Override
@@ -33,32 +33,28 @@ public class AStar{
         }
     }
     public static Iterable<Integer> shortestPath(int[][] maze, int x1, int y1, int x2, int y2) {
-        // TODO
         PriorityQueue<Node> pq = new PriorityQueue<>();
         BitSet visited = new BitSet(maze.length);
         pq.add(new Node(x1, y1, 0, Math.abs(x2-x1) + Math.abs(y2-y1), null));
         while(!pq.isEmpty()){
             Node x = pq.remove();
-            visited.set(ind(x.x, x.y, maze.length));
+            visited.set(ind(x.x, x.y, maze[0].length));
             if (x.x == x2 && x.y == y2){
                 LinkedList<Integer> ret = new LinkedList<>();
-                while(x.parent != null){
-                    ret.add(ind(x.x, x.y, maze.length));
+                while(x != null){
+                    ret.addFirst(ind(x.x, x.y, maze[0].length));
                     x = x.parent;
                 }
-                ret.add(ind(x.x, x.y, maze.length));
-                LinkedList<Integer> temp =new LinkedList<>();
-                for (int i : ret) temp.addFirst(i);
-                return temp;
+                return ret;
             }
 
             for (int i = -1; i <= 1 ; i+=2) {
-                if (x.x + i >= 0 && x.x+i < maze.length && maze[x.x+i][x.y] != 1 && !visited.get(ind(x.x + i, x.y, maze.length)))
+                if (x.x + i >= 0 && x.x+i < maze.length && maze[x.x+i][x.y] != 1 && !visited.get(ind(x.x + i, x.y, maze[0].length)))
                     pq.add(new Node(x.x+i, x.y, Math.abs(x.x+i - x1) + Math.abs(x.y - y1), Math.abs(x.x+i - x2) + Math.abs(x.y - y2), x));
             }
 
             for (int j = -1; j <= 1 ; j+=2) {
-                if (x.y + j >= 0 && x.y + j< maze[0].length && maze[x.x][x.y+j] != 1 && !visited.get(ind(x.x,  x.y + j, maze.length)))
+                if (x.y + j >= 0 && x.y + j< maze[0].length && maze[x.x][x.y+j] != 1 && !visited.get(ind(x.x,  x.y + j, maze[0].length)))
                     pq.add(new Node(x.x, x.y+j, Math.abs(x.x - x1) + Math.abs(x.y+j - y1), Math.abs(x.x - x2) + Math.abs(x.y+j - y2), x));
             }
         }
@@ -88,7 +84,7 @@ public class AStar{
                 {0, 0, 0, 0, 1, 0, 0}
         };
         for (int w : shortestPath(maze1, 2, 3, 4, 3)){
-            System.out.println(row(w, maze1.length) + "," + col(w, maze1.length));
+            System.out.println(row(w, maze1[0].length) + "," + col(w, maze1[0].length));
         }
     }
 

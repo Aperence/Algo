@@ -17,50 +17,57 @@ import java.util.*;
 public class Maze {
 
     public static class Node implements Comparable{
+        int dist;
         int x;
         int y;
-        int f;
         Node parent;
-        Node(int x, int y, int h, int g, Node p){this.x = x; this.y = y; this.f = h+g; this.parent = p;};
+
+        Node(int x, int y, int d, Node p){this.x = x; this.y = y;dist = d; parent = p;}
+
+        public boolean isTarget(int x, int y){
+            return this.x == x && this.y==y;
+        }
 
         @Override
         public int compareTo(Object o) {
-            return f - ((Node) o).f ;
-        }
-
-        @Override
-        public String toString() {
-            return "(" + x + "," + y + ")";
+            return dist - ((Node) o).dist;
         }
     }
+
+    public static boolean inLimit(int x, int lower, int upper){
+        return x >= lower && x < upper;
+    }
     public static Iterable<Integer> shortestPath(int[][] maze, int x1, int y1, int x2, int y2) {
-        // TODO
+        // dijkstra implementation
+        if (inLimit(x1, 0, maze.length)
+                && inLimit(x2, 0, maze.length)
+                && inLimit(y1, 0, maze[0].length)
+                && inLimit(y2, 0, maze[0].length)
+                && maze[x1][y1] == 1) return new LinkedList<>();
         PriorityQueue<Node> pq = new PriorityQueue<>();
-        BitSet visited = new BitSet(maze.length);
-        pq.add(new Node(x1, y1, 0, Math.abs(x2-x1) + Math.abs(y2-y1), null));
-        while(!pq.isEmpty()){
-            Node x = pq.remove();
-            visited.set(ind(x.x, x.y, maze.length));
-            if (x.x == x2 && x.y == y2){
+        pq.add(new Node(x1, y1, 0, null));
+        boolean[] marked = new boolean[maze.length* maze[0].length];
+        while (!pq.isEmpty()){
+            Node n = pq.remove();
+            if (n.isTarget(x2, y2)){
                 LinkedList<Integer> ret = new LinkedList<>();
-                while(x.parent != null){
-                    ret.add(ind(x.x, x.y, maze.length));
-                    x = x.parent;
+                while (n != null){
+                    ret.addFirst(ind(n.x, n.y, maze[0].length));
+                    n = n.parent;
                 }
-                ret.add(ind(x.x, x.y, maze.length));
-                LinkedList<Integer> temp =new LinkedList<>();
-                for (int i : ret) temp.addFirst(i);
-                return temp;
+                return ret;
             }
-
-            for (int i = -1; i <= 1 ; i+=2) {
-                if (x.x + i >= 0 && x.x+i < maze.length && maze[x.x+i][x.y] != 1 && !visited.get(ind(x.x + i, x.y, maze.length)))
-                    pq.add(new Node(x.x+i, x.y, Math.abs(x.x+i - x1) + Math.abs(x.y - y1), Math.abs(x.x+i - x2) + Math.abs(x.y - y2), x));
+            if (marked[ind(n.x, n.y, maze[0].length)]) continue;
+            marked[ind(n.x, n.y, maze[0].length)] = true;
+            for (int i = -1; i <= 1; i+=2) {
+                int newX = n.x + i;
+                if (newX >=0 && newX < maze.length && maze[newX][n.y] != 1)
+                    pq.add(new Node(newX, n.y, n.dist + 1, n));
             }
-
-            for (int j = -1; j <= 1 ; j+=2) {
-                if (x.y + j >= 0 && x.y + j< maze[0].length && maze[x.x][x.y+j] != 1 && !visited.get(ind(x.x,  x.y + j, maze.length)))
-                    pq.add(new Node(x.x, x.y+j, Math.abs(x.x - x1) + Math.abs(x.y+j - y1), Math.abs(x.x - x2) + Math.abs(x.y+j - y2), x));
+            for (int i = -1; i <= 1; i+=2) {
+                int newY = n.y + i;
+                if (newY >= 0 && newY < maze[0].length && maze[n.x][newY] != 1)
+                    pq.add(new Node(n.x, newY, n.dist + 1, n));
             }
         }
         return new LinkedList<>();
@@ -79,6 +86,10 @@ public class Maze {
     }
 
     public static void main(String[] args) {
+        int[][] maze2 = new int[][]{
+                {0, 0, 0, 1, 0, 0, 0},
+                {1, 1, 0, 0, 0, 1, 0}
+        };
         int[][] maze1 = new int[][]{
                 {0, 0, 0, 0, 0, 0, 0},
                 {1, 1, 0, 0, 0, 0, 0},
@@ -88,8 +99,9 @@ public class Maze {
                 {1, 1, 0, 0, 1, 0, 0},
                 {0, 0, 0, 0, 1, 0, 0}
         };
-        for (int w : shortestPath(maze1, 2, 3, 4, 3)){
-            System.out.println(row(w, maze1.length) + "," + col(w, maze1.length));
+
+        for (int w : shortestPath(maze1, 1, 0, 6, 0)){
+            System.out.println(row(w, maze1[0].length) + "," + col(w, maze1[0].length));
         }
     }
 
