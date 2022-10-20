@@ -2,16 +2,17 @@ package searching_supp;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 public class BinarySearchST<Key extends Comparable<Key>, Value> {
 
-    private class Node{
-        final Key k;
+    private class Node<Key extends Comparable<Key>, Value>{
+        Key k;
         Value v;
-        Node left;
-        Node right;
+        Node<Key, Value> left;
+        Node<Key, Value> right;
 
-        Node(Key k, Value v, Node l, Node r){
+        Node(Key k, Value v, Node<Key, Value> l, Node<Key, Value> r){
             this.k = k;
             this.v = v;
             left = l;
@@ -19,12 +20,12 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         }
     }
 
-    private Node root = null;
-    private Node lastAdded = null;
+    private Node<Key, Value> root = null;
+    private Node<Key, Value> lastAdded = null;
 
     private int size = 0;
 
-    public Value search(Key k, Node n){
+    public Value search(Key k, Node<Key, Value> n){
         if (n == null) return null;
         if (n.k.compareTo(k) == 0) return n.v;
         else if (n.k.compareTo(k) < 0) return search(k, n.right);
@@ -51,11 +52,29 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         root = put(k, v, root);
     }
 
-    public void inOrder(Key[] arr, Node n, int[] counter){
+    public void inOrder(Key[] arr, Node<Key, Value> n, int[] counter){
         if (n == null) return;
         inOrder(arr, n.left, counter);
         arr[counter[0]++] = n.k;
         inOrder(arr, n.right, counter);
+    }
+
+    public void inorder(Node<Key, Value> n, StringBuilder sb){
+        if (n==null) return;
+
+        sb.append("(");
+        inorder(n.left, sb);
+        sb.append(")");
+        sb.append(n.k);
+        sb.append("(");
+        inorder(n.right, sb);
+        sb.append(")");
+    }
+
+    public String inorder(){
+        StringBuilder sb = new StringBuilder();
+        inorder(root, sb);
+        return sb.toString();
     }
 
     public boolean isSorted(Key[] arr){
@@ -72,17 +91,42 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         return isSorted(keys);
     }
 
+    public Node<Integer, Integer> nodeFromString(StringTokenizer s){
+        if (!s.hasMoreTokens()) return null;
+        String c = s.nextToken();
+        Node<Integer, Integer> ret = new Node(null, null, null, null);
+        if (c.equals(")")) return null;
+        if (c.equals("(")) {ret.left = nodeFromString(s); c = s.nextToken();}
+
+        StringBuilder sb = new StringBuilder();
+        while(!c.equals(")") && !c.equals("(") && s.hasMoreTokens()){
+            sb.append(c);
+            c = s.nextToken();
+        }
+        ret.k = Integer.parseInt(sb.toString());
+        ret.v = Integer.parseInt(sb.toString());
+        ret.right = nodeFromString(s);
+        return ret;
+    }
+
+
+    public static BinarySearchST<Integer, Integer> treeFromString(String s){
+        BinarySearchST<Integer, Integer> st = new BinarySearchST<>();
+        String[] strings = s.split("");
+        s = String.join(",", strings);
+        StringTokenizer tokens = new StringTokenizer(s, ",");
+        st.root = st.nodeFromString(tokens);
+        return st;
+    }
+
     public static void main(String[] args) {
         BinarySearchST<Integer, Integer> st = new BinarySearchST();
-        for (int i = 0; i < 100 ; i++) {
+        for (int i = 0; i < 10 ; i++) {
             st.put(i, i);
         }
-        System.out.println(st.search(53));
-        System.out.println(st.search(100));
-        for (int i = 0; i < 100; i++) {
-            st.put(53,53);
-        }
-        System.out.println(st.size());
-        st.isBST();
+        String s = st.inorder();
+        System.out.println(s);
+        BinarySearchST<Integer, Integer> st2 = treeFromString(s);
+        System.out.println(st2.inorder());
     }
 }

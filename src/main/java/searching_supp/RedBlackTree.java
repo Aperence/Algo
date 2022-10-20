@@ -82,16 +82,22 @@ public class RedBlackTree<K extends Comparable, I> {
         root.color = BLACK;
     }
 
-    public void inorder(Node n){
+    public void inorder(Node n, StringBuilder sb){
         if (n==null) return;
 
-        inorder(n.left);
-        System.out.println(n);
-        inorder(n.right);
+        sb.append("(");
+        inorder(n.left, sb);
+        sb.append(")");
+        sb.append(n.key);
+        sb.append("(");
+        inorder(n.right, sb);
+        sb.append(")");
     }
 
-    public void inorder(){
-        inorder(root);
+    public String inorder(){
+        StringBuilder sb = new StringBuilder();
+        inorder(root, sb);
+       return sb.toString();
     }
 
     public void inOrder(K[] arr, Node n, int[] counter){
@@ -153,7 +159,8 @@ public class RedBlackTree<K extends Comparable, I> {
         rbt.put(6, "John");
         rbt.put(7, "Tim");
         rbt.put(9, "Tommy");
-        rbt.inorder();
+
+        System.out.println(rbt.inorder());
         System.out.println(rbt.is23());
         System.out.println(rbt.isBalanced());
         System.out.println(rbt.isBST());
