@@ -22,12 +22,30 @@ import java.util.List;
 public class ConnectedComponents {
 
 
+    static int count = 0;
+    static boolean[] marked;
+
+    public static void dfs(Graph g, int v){
+        marked[v] = true;
+        for (int w : g.adj(v)){
+            if (!marked[w]) dfs(g, w);
+        }
+    }
+
     /**
      * @return the number of connected components in g
      */
     public static int numberOfConnectedComponents(Graph g) {
-        // TODO
-         return -1;
+
+        marked = new boolean[g.V()];
+        count = 0;
+        for (int i = 0; i < g.V(); i++) {
+            if(!marked[i]){
+                dfs(g, i);
+                count++;
+            }
+        }
+         return count;
     }
 
     static class Graph {
