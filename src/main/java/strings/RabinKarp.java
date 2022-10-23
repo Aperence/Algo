@@ -1,5 +1,6 @@
 package strings;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -21,9 +22,9 @@ import java.util.Hashtable;
 public class RabinKarp {
 
 
-    private String[] pat; // pattern (only needed for Las Vegas)
+     private String[] pats; // pattern (only needed for Las Vegas)
 
-    private long patHash; // pattern hash value
+     private HashMap<Long, Integer> patHash; // pattern hash value
 
 
     private int M; // pattern length
@@ -33,12 +34,30 @@ public class RabinKarp {
 
     public RabinKarp(String[] pat) {
 
-         this.pat = pat; // save pattern (only needed for Las Vegas)
-         Q = 4463;
+
+        this.pats = pat; // save pattern (only needed for Las Vegas)
+        this.M = pat[0].length();
+        patHash = new HashMap<>();
+
+        Q = 4463;
+        RM = 1;
+
+        for (int i = 1; i <= M - 1; i++) // Compute R^(M-1) % Q for use
+            RM = (R * RM) % Q; // in removing leading digit.
+
+        for (int i = 0; i < pats.length; i++) {
+            patHash.put(hash(pats[i], M), i);
+        }
+
     }
 
-     public boolean check(int i) // Monte Carlo (See text.)
-     { return true; } // For Las Vegas, check pat vs txt(i..i-M+1).
+     public boolean check(int i, int j, String txt) // Monte Carlo (See text.)
+     {
+         for (int k = 0; k < M; k++) {
+             if (txt.charAt(i+k) != pats[j].charAt(k)) return false;
+         }
+         return true;
+     } // For Las Vegas, check pat vs txt(i..i-M+1).
 
 
     private long hash(String key, int M) { // Compute hash for key[0..M-1].
@@ -51,22 +70,15 @@ public class RabinKarp {
 
     public int search(String txt) { // Search for hash match in text.
         int N = txt.length();
-        for (int j = 0; j < pat.length; j++) {
 
-            M = pat[j].length();
-            RM = 1;
-            for (int i = 1; i <= M - 1; i++) // Compute R^(M-1) % Q for use
-                RM = (R * RM) % Q;
-            patHash = hash(pat[j], M);
-            long txtHash = hash(txt, M);
+        long txtHash = hash(txt, M);
 
-            if (patHash == txtHash) return 0; // Match at beginning.
-            for (int i = M; i < N; i++) { // Remove leading digit, add trailing digit, check for match.
-                txtHash = (txtHash + Q - RM * txt.charAt(i - M) % Q) % Q;
-                txtHash = (txtHash * R + txt.charAt(i)) % Q;
-                 if (patHash == txtHash)
-                    if (check(i - M + 1)) return i - M + 1; // match
-            }
+        if (patHash.containsKey(txtHash) && check(0, patHash.get(txtHash), txt)) return 0; // Match at beginning.
+        for (int i = M; i < N; i++) { // Remove leading digit, add trailing digit, check for match.
+            txtHash = (txtHash + Q - RM * txt.charAt(i - M) % Q) % Q;
+            txtHash = (txtHash * R + txt.charAt(i)) % Q;
+             if (patHash.containsKey(txtHash))
+                if (check(i - M + 1, patHash.get(txtHash), txt)) return i - M + 1; // match
         }
         return N; // no match found
     }

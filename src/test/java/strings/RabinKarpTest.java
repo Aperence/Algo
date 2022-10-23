@@ -108,7 +108,8 @@ public class RabinKarpTest {
                 "io n  is  a  f un ct io n  wh ic h  co nv er ts  e ve ry  s tr in g  in to  a  n um er ic  v al ue ,"+
                 "  ca ll ed  i ts  h as h  va lu e;  f or  e xa mp le ,  we  m ig ht  h av e  ha sh (h el lo )= 5.  T";
 
-        assertEquals(txt.length(),rc.search(txt));
+        int res = rc.search(txt);
+        assertEquals(txt.length(),res);
 
         long t1 = System.currentTimeMillis();
         System.out.println("Spent time = "+(t1-t0));

@@ -25,7 +25,19 @@ public class StackWithTwoQueues<E> {
      * without removing it from the stack
      */
     public boolean empty() {
-        return queue1.isEmpty();
+         return queue1.isEmpty() && queue2.isEmpty();
+    }
+
+    public void check(){
+        if (!queue2.isEmpty()) return;
+        E[] temp = (E[]) new Object[queue1.size()];
+        int n =  queue1.size();
+        for (int i = 0; i < n; i++) {
+            temp[i] = queue1.remove();
+        }
+        for (int i = temp.length-1; i >= 0; i--) {
+            queue2.add(temp[i]);
+        }
     }
 
     /**
@@ -34,17 +46,9 @@ public class StackWithTwoQueues<E> {
      * @throws EmptyStackException if the stack is empty
      */
     public E peek() throws EmptyStackException {
-        if (empty()) throw new EmptyStackException();
-        int size = queue1.size();
-        E item = null;
-        for (int i = 0; i < size; i++) {
-            item = queue1.remove();
-            queue2.add(item);
-        }
-        for (int i = 0; i < size; i++) {
-            queue1.add(queue2.remove());
-        }
-        return item;
+         if (empty()) throw new EmptyStackException();
+         check();
+         return queue2.peek();
     }
 
     /**
@@ -54,16 +58,8 @@ public class StackWithTwoQueues<E> {
      */
     public E pop() throws EmptyStackException {
         if (empty()) throw new EmptyStackException();
-        int size = queue1.size();
-        E item = null;
-        for (int i = 0; i < size; i++) {
-            item = queue1.remove();
-            if (i != size-1) queue2.add(item);
-        }
-        for (int i = 0; i < size-1; i++) {
-            queue1.add(queue2.remove());
-        }
-        return item;
+        check();
+        return queue2.remove();
     }
 
     /**
@@ -73,6 +69,16 @@ public class StackWithTwoQueues<E> {
      */
     public void push(E item) {
         queue1.add(item);
+    }
+
+    public static void main(String[] args) {
+        StackWithTwoQueues<Integer> st = new StackWithTwoQueues<>();
+        for (int i = 0; i < 100; i++) {
+            st.push(i);
+        }
+        for (int i = 0; i < 100; i++) {
+            System.out.println(st.pop());
+        }
     }
 
 }
