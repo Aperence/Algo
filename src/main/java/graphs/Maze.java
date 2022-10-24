@@ -39,11 +39,11 @@ public class Maze {
     }
     public static Iterable<Integer> shortestPath(int[][] maze, int x1, int y1, int x2, int y2) {
         // dijkstra implementation
-        if (inLimit(x1, 0, maze.length)
-                && inLimit(x2, 0, maze.length)
-                && inLimit(y1, 0, maze[0].length)
-                && inLimit(y2, 0, maze[0].length)
-                && maze[x1][y1] == 1) return new LinkedList<>();
+        if (!inLimit(x1, 0, maze.length)
+                || !inLimit(x2, 0, maze.length)
+                || !inLimit(y1, 0, maze[0].length)
+                || !inLimit(y2, 0, maze[0].length)
+                || maze[x1][y1] == 1) return new LinkedList<>();
         PriorityQueue<Node> pq = new PriorityQueue<>();
         pq.add(new Node(x1, y1, 0, null));
         boolean[] marked = new boolean[maze.length* maze[0].length];
@@ -59,16 +59,24 @@ public class Maze {
             }
             if (marked[ind(n.x, n.y, maze[0].length)]) continue;
             marked[ind(n.x, n.y, maze[0].length)] = true;
-            for (int i = -1; i <= 1; i+=2) {
-                int newX = n.x + i;
-                if (newX >=0 && newX < maze.length && maze[newX][n.y] != 1)
-                    pq.add(new Node(newX, n.y, n.dist + 1, n));
-            }
-            for (int i = -1; i <= 1; i+=2) {
-                int newY = n.y + i;
-                if (newY >= 0 && newY < maze[0].length && maze[n.x][newY] != 1)
-                    pq.add(new Node(n.x, newY, n.dist + 1, n));
-            }
+
+
+            int newX = n.x + 1;
+            if (newX >=0 && newX < maze.length && maze[newX][n.y] != 1)
+                pq.add(new Node(newX, n.y, n.dist + 1, n));
+
+            int newY = n.y + 1;
+            if (newY >= 0 && newY < maze[0].length && maze[n.x][newY] != 1)
+                pq.add(new Node(n.x, newY, n.dist + 1, n));
+
+            newX = n.x - 1;
+            if (newX >=0 && newX < maze.length && maze[newX][n.y] != 1)
+                pq.add(new Node(newX, n.y, n.dist + 1, n));
+
+            newY = n.y - 1;
+            if (newY >= 0 && newY < maze[0].length && maze[n.x][newY] != 1)
+                pq.add(new Node(n.x, newY, n.dist + 1, n));
+
         }
         return new LinkedList<>();
     }
