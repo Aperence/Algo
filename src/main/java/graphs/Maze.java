@@ -39,42 +39,44 @@ public class Maze {
     }
     public static Iterable<Integer> shortestPath(int[][] maze, int x1, int y1, int x2, int y2) {
         // dijkstra implementation
-        if (!inLimit(x1, 0, maze.length)
-                || !inLimit(x2, 0, maze.length)
-                || !inLimit(y1, 0, maze[0].length)
-                || !inLimit(y2, 0, maze[0].length)
-                || maze[x1][y1] == 1) return new LinkedList<>();
+        int N = maze.length;
+        int M = maze[0].length;
+        if (!inLimit(x1, 0, N)
+                || !inLimit(x2, 0, N)
+                || !inLimit(y1, 0, M)
+                || !inLimit(y2, 0, M)
+                || maze[x1][y1] == 1 || maze[x2][y2] == 1) return new LinkedList<>();
         PriorityQueue<Node> pq = new PriorityQueue<>();
         pq.add(new Node(x1, y1, 0, null));
-        boolean[] marked = new boolean[maze.length* maze[0].length];
+        boolean[] marked = new boolean[N*M];
         while (!pq.isEmpty()){
             Node n = pq.remove();
             if (n.isTarget(x2, y2)){
                 LinkedList<Integer> ret = new LinkedList<>();
                 while (n != null){
-                    ret.addFirst(ind(n.x, n.y, maze[0].length));
+                    ret.addFirst(ind(n.x, n.y, M));
                     n = n.parent;
                 }
                 return ret;
             }
-            if (marked[ind(n.x, n.y, maze[0].length)]) continue;
-            marked[ind(n.x, n.y, maze[0].length)] = true;
-
+            if (marked[ind(n.x, n.y, M)]) continue;
+            marked[ind(n.x, n.y, M)] = true;
 
             int newX = n.x + 1;
-            if (newX >=0 && newX < maze.length && maze[newX][n.y] != 1)
+            if (newX >=0 && newX < N && maze[newX][n.y] != 1)
                 pq.add(new Node(newX, n.y, n.dist + 1, n));
-
-            int newY = n.y + 1;
-            if (newY >= 0 && newY < maze[0].length && maze[n.x][newY] != 1)
-                pq.add(new Node(n.x, newY, n.dist + 1, n));
 
             newX = n.x - 1;
-            if (newX >=0 && newX < maze.length && maze[newX][n.y] != 1)
+            if (newX >=0 && newX < N && maze[newX][n.y] != 1)
                 pq.add(new Node(newX, n.y, n.dist + 1, n));
 
+
+            int newY = n.y + 1;
+            if (newY >= 0 && newY < M && maze[n.x][newY] != 1)
+                pq.add(new Node(n.x, newY, n.dist + 1, n));
+
             newY = n.y - 1;
-            if (newY >= 0 && newY < maze[0].length && maze[n.x][newY] != 1)
+            if (newY >= 0 && newY < M && maze[n.x][newY] != 1)
                 pq.add(new Node(n.x, newY, n.dist + 1, n));
 
         }

@@ -1,4 +1,4 @@
-package solution;
+package searching_supp;
 
 public class Node3 extends Node{
 

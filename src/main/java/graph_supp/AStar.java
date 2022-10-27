@@ -32,7 +32,17 @@ public class AStar{
             return "(" + x + "," + y + ")";
         }
     }
+
+    public static boolean inLimit(int x, int lower, int upper){
+        return x >= lower && x < upper;
+    }
     public static Iterable<Integer> shortestPath(int[][] maze, int x1, int y1, int x2, int y2) {
+        if (!inLimit(x1, 0, maze.length)
+                || !inLimit(x2, 0, maze.length)
+                || !inLimit(y1, 0, maze[0].length)
+                || !inLimit(y2, 0, maze[0].length)
+                || maze[x1][y1] == 1) return new LinkedList<>();
+
         PriorityQueue<Node> pq = new PriorityQueue<>();
         BitSet visited = new BitSet(maze.length);
         pq.add(new Node(x1, y1, 0, Math.abs(x2-x1) + Math.abs(y2-y1), null));

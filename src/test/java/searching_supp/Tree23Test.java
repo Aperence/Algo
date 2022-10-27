@@ -1,6 +1,8 @@
+package searching_supp;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
 
 
 /**
