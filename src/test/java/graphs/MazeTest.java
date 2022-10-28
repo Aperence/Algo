@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import graph_supp.AStar;
 
 import java.io.*;
 
@@ -211,14 +212,9 @@ public class MazeTest {
                 int x1 = query.get(0), y1 =query.get(1), x2 = query.get(2), y2 = query.get(3);
                 Iterable<Integer> path = Maze.shortestPath(maze, x1, y1, x2, y2);
                 Integer[] pathArray = toArray(path);
-                assertArrayEquals(pathArray, instance.solutions.get(i).toArray());
-                //assertEquals(pathArray.length, instance.solutions.get(i).toArray().length);
-                /*
-                ArrayList<Integer> lst = new ArrayList<>();
-                for (int j : pathArray){
-                    lst.add(j);
-                }
-                if (pathArray.length>0) assertTrue(validPathSourceToDest(x1, y1, x2, y2, maze, lst));*/
+                //assertArrayEquals(pathArray, instance.solutions.get(i).toArray());
+                assertEquals(pathArray.length, instance.solutions.get(i).toArray().length);
+                if (pathArray.length>0) assertTrue(validPathSourceToDest(x1, y1, x2, y2, maze, path));
             }
         }
         final Instance instance;

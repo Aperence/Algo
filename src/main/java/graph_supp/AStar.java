@@ -37,18 +37,21 @@ public class AStar{
         return x >= lower && x < upper;
     }
     public static Iterable<Integer> shortestPath(int[][] maze, int x1, int y1, int x2, int y2) {
-        if (!inLimit(x1, 0, maze.length)
-                || !inLimit(x2, 0, maze.length)
-                || !inLimit(y1, 0, maze[0].length)
-                || !inLimit(y2, 0, maze[0].length)
-                || maze[x1][y1] == 1) return new LinkedList<>();
+        int N = maze.length;
+        int M = maze[0].length;
+        if (!inLimit(x1, 0, N)
+                || !inLimit(x2, 0, N)
+                || !inLimit(y1, 0, M)
+                || !inLimit(y2, 0, M)
+                || maze[x1][y1] == 1 || maze[x2][y2] == 1) return new LinkedList<>();
 
         PriorityQueue<Node> pq = new PriorityQueue<>();
-        BitSet visited = new BitSet(maze.length);
+        BitSet visited = new BitSet(N);
         pq.add(new Node(x1, y1, 0, Math.abs(x2-x1) + Math.abs(y2-y1), null));
         while(!pq.isEmpty()){
             Node x = pq.remove();
-            visited.set(ind(x.x, x.y, maze[0].length));
+            if (visited.get(ind(x.x, x.y, M))) continue;
+            visited.set(ind(x.x, x.y, M));
             if (x.x == x2 && x.y == y2){
                 LinkedList<Integer> ret = new LinkedList<>();
                 while(x != null){
@@ -59,12 +62,12 @@ public class AStar{
             }
 
             for (int i = -1; i <= 1 ; i+=2) {
-                if (x.x + i >= 0 && x.x+i < maze.length && maze[x.x+i][x.y] != 1 && !visited.get(ind(x.x + i, x.y, maze[0].length)))
+                if (inLimit(x.x+i, 0, N) && maze[x.x+i][x.y] != 1 && !visited.get(ind(x.x + i, x.y, M)))
                     pq.add(new Node(x.x+i, x.y, Math.abs(x.x+i - x1) + Math.abs(x.y - y1), Math.abs(x.x+i - x2) + Math.abs(x.y - y2), x));
             }
 
             for (int j = -1; j <= 1 ; j+=2) {
-                if (x.y + j >= 0 && x.y + j< maze[0].length && maze[x.x][x.y+j] != 1 && !visited.get(ind(x.x,  x.y + j, maze[0].length)))
+                if (inLimit(x.y + j, 0, M) && maze[x.x][x.y+j] != 1 && !visited.get(ind(x.x,  x.y + j, M)))
                     pq.add(new Node(x.x, x.y+j, Math.abs(x.x - x1) + Math.abs(x.y+j - y1), Math.abs(x.x - x2) + Math.abs(x.y+j - y2), x));
             }
         }
