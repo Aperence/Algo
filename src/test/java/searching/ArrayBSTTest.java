@@ -1,4 +1,4 @@
-package searching_supp;
+package searching;
 
 import com.github.guillaumederval.javagrading.Grade;
 import com.github.guillaumederval.javagrading.GradeFeedback;
