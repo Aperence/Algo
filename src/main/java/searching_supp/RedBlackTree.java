@@ -1,6 +1,7 @@
 package searching_supp;
 
 
+
 import java.util.Arrays;
 import java.util.Stack;
 
@@ -32,6 +33,10 @@ public class RedBlackTree<K extends Comparable, I> {
         }
     }
 
+    private boolean isEmpty(){
+        return root == null;
+    }
+
     private Node rotateLeft(Node n){
         Node x = n.right;
         n.right = x.left;
@@ -56,9 +61,9 @@ public class RedBlackTree<K extends Comparable, I> {
     }
 
     private void flipColor(Node n){
-        n.color = RED;
-        n.left.color = BLACK;
-        n.right.color = BLACK;
+        n.color = !n.color;
+        n.left.color = !n.left.color;
+        n.right.color = !n.right.color;
     }
 
     public Node put(Node n, K key, I value){
@@ -82,6 +87,85 @@ public class RedBlackTree<K extends Comparable, I> {
         root.color = BLACK;
     }
 
+    public I get(Node n, K key){
+        if (n==null) return null;
+        if (key.compareTo(n.key) == 0) return n.value;
+        else if (key.compareTo(n.key) < 0) return get(n.left, key);
+        else return get(n.right, key);
+    }
+
+    public I get(K key){
+        return get(root, key);
+    }
+
+    private Node min(Node n) {
+        if (n==null) return null;
+        if (n.left == null) return n;
+        return min(n.left);
+    }
+
+    private Node moveRedLeft(Node n){
+        flipColor(n);
+        if (isRed(n.right.left)){
+            n.right = rotateRight(n.right);
+            n = rotateLeft(n);
+        }
+        return n;
+    }
+
+    private Node moveRedRight(Node n){
+        flipColor(n);
+        if (!isRed(n.left.left))
+            n = rotateRight(n);
+        return n;
+    }
+
+    private Node balance(Node n){
+        if (isRed(n.right)) n = rotateLeft(n);
+        //if (isRed(n.right) && !isRed(n.left)) n = rotateLeft(n);
+        if (isRed(n.left) && isRed(n.left.left)) n = rotateRight(n);
+        if (isRed(n.right) && isRed(n.left)) flipColor(n);
+        return n;
+    }
+
+    private Node deleteMin(Node n) {
+        if (n.left == null) return null;
+        if (!isRed(n.left) && !isRed(n.left.left))
+            n = moveRedLeft(n);
+        n.left = deleteMin(n.left);
+        return balance(n);
+    }
+
+
+    public Node delete(Node n, K key) {
+        if (key.compareTo(n.key) < 0) {
+            if (!isRed(n.left) && !isRed(n.left.left))
+                n = moveRedLeft(n);
+            n.left = delete(n.left, key);
+        } else {
+            if (isRed(n.left))
+                n = rotateRight(n);
+            if (key.compareTo(n.key) == 0 && n.right == null)
+                return null;
+            if (!isRed(n.right) && !isRed(n.right.left))
+                n = moveRedRight(n);
+            if (key.compareTo(n.key) == 0){
+                n.value = get(n.right, min(n.right).key);
+                n.key = min(n.right).key;
+                n.right = deleteMin(n.right);
+            }
+            else n.right = delete(n.right, key);
+        }
+        return balance(n);
+    }
+
+    public void delete(K key){
+        if (!isRed(root.left) && !isRed(root.right))
+            root.color = RED;
+        root = delete(root, key);
+        if (!isEmpty()) root.color = BLACK;
+    }
+
     public void inorder(Node n, StringBuilder sb){
         if (n==null) return;
 
@@ -92,12 +176,6 @@ public class RedBlackTree<K extends Comparable, I> {
         sb.append("(");
         inorder(n.right, sb);
         sb.append(")");
-    }
-
-    public String inorder(){
-        StringBuilder sb = new StringBuilder();
-        inorder(root, sb);
-       return sb.toString();
     }
 
     public void inOrder(K[] arr, Node n, int[] counter){
@@ -149,20 +227,4 @@ public class RedBlackTree<K extends Comparable, I> {
         return is23() && isBalanced() && isBST();
     }
 
-    public static void main(String[] args) {
-        RedBlackTree<Integer, String> rbt = new RedBlackTree<>();
-        rbt.put(2, "John");
-        rbt.put(1, "Tim");
-        rbt.put(3, "Tommy");
-        rbt.put(4, "Jimmy");
-        rbt.put(0, "Jim");
-        rbt.put(6, "John");
-        rbt.put(7, "Tim");
-        rbt.put(9, "Tommy");
-
-        System.out.println(rbt.inorder());
-        System.out.println(rbt.is23());
-        System.out.println(rbt.isBalanced());
-        System.out.println(rbt.isBST());
-    }
 }

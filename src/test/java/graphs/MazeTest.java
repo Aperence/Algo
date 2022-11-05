@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import graph_supp.AStar;
 
 import java.io.*;
 
@@ -68,7 +67,7 @@ public class MazeTest {
     public static class TestNotParameterized {
 
         @Test
-        @Grade(value = 10)
+        @Grade(value = 1)
         public void testMaze1a() {
             Iterable<Integer> path = Maze.shortestPath(maze1, 0, 0, 6, 0);
             Integer[] pathArray = toArray(path);
@@ -77,7 +76,7 @@ public class MazeTest {
         }
 
         @Test
-        @Grade(value = 10)
+        @Grade(value = 1)
         public void testMaze1b() {
             // should not have a path
             // unreachable destination
@@ -91,7 +90,7 @@ public class MazeTest {
         }
 
         @Test
-        @Grade(value = 20)
+        @Grade(value = 1)
         public void testMaze1c() {
             Iterable<Integer> path = Maze.shortestPath(maze1, 0, 0, 0, 0);
             Integer[] pathArray = toArray(path);
@@ -100,7 +99,7 @@ public class MazeTest {
         }
 
         @Test
-        @Grade(value = 20)
+        @Grade(value = 1)
         public void testMaze2a() {
             Iterable<Integer> path = Maze.shortestPath(maze2, 0, 0, 1, 6);
             Integer[] pathArray = toArray(path);
@@ -109,7 +108,7 @@ public class MazeTest {
         }
 
         @Test(timeout = 20)
-        @Grade(value = 40)
+        @Grade(value = 1)
         public void testComplexity() {
             int positions[][] = new int[2][2];
             int[][] maze = getMaze("data/graphs.Maze/in_0", 24, 110, positions);
@@ -209,12 +208,9 @@ public class MazeTest {
 
             for (int i = 0; i < instance.nQueries; i++) {
                 ArrayList<Integer> query = instance.queries.get(i);
-                int x1 = query.get(0), y1 =query.get(1), x2 = query.get(2), y2 = query.get(3);
-                Iterable<Integer> path = Maze.shortestPath(maze, x1, y1, x2, y2);
+                Iterable<Integer> path = Maze.shortestPath(maze, query.get(0), query.get(1), query.get(2), query.get(3));
                 Integer[] pathArray = toArray(path);
-                //assertArrayEquals(pathArray, instance.solutions.get(i).toArray());
-                assertEquals(pathArray.length, instance.solutions.get(i).toArray().length);
-                if (pathArray.length>0) assertTrue(validPathSourceToDest(x1, y1, x2, y2, maze, path));
+                assertArrayEquals(pathArray, instance.solutions.get(i).toArray());
             }
         }
         final Instance instance;

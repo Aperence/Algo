@@ -29,6 +29,7 @@ import java.util.Stack;
 public class BinarySearchTreeIterator<Key extends Comparable<Key>> implements Iterable<Key> {
 
     private BSTNode<Key> root;
+    long nOp = 0;
 
     public BinarySearchTreeIterator() { };
 
@@ -51,13 +52,36 @@ public class BinarySearchTreeIterator<Key extends Comparable<Key>> implements It
         return node.getSize();
     }
 
+    public Key minKey(BSTNode<Key> n){
+        if (n.left == null) return n.key;
+        return minKey(n.left);
+    }
+
+    public Key minKey(){
+        if (root == null) return null;
+        return minKey(root);
+    }
+
+    public Key leastKey(BSTNode<Key> n, Key v,  Key ceil){
+        if (n == null) return ceil;
+        int cmp = v.compareTo(n.key);
+        if (cmp < 0){
+            if (ceil == null || ceil.compareTo(n.key) > 0) return leastKey(n.left, v, n.key);
+            else return leastKey(n.left, v, ceil);
+        }else return leastKey(n.right, v, ceil);
+    }
+
+    public Key leastKey(Key k){
+        return leastKey(root, k, null);
+    }
+
     /**
      * Adds a value in the tree
      *
      * @param key the value to add
      */
     public void put(Key key) {
-        this.root = put(this.root, key);
+        nOp++; this.root = put(this.root, key);
     }
 
     /**
@@ -82,7 +106,7 @@ public class BinarySearchTreeIterator<Key extends Comparable<Key>> implements It
 
     @Override
     public Iterator<Key> iterator() {
-        return new BSTIterator();
+        return new BSTIterator2();
     }
 
     private class BSTIterator implements Iterator<Key> {
@@ -114,6 +138,32 @@ public class BinarySearchTreeIterator<Key extends Comparable<Key>> implements It
             if (!hasNext()) throw new NoSuchElementException();
             if (size != size()) throw new ConcurrentModificationException();
             return list[runner++];
+        }
+    }
+
+    class BSTIterator2 implements Iterator<Key>{
+
+        long nbOp = nOp;
+        BSTNode<Key> runner = root;
+        Stack<BSTNode<Key>> s = new Stack<>();
+
+        @Override
+        public boolean hasNext() {
+            if (nbOp != nOp) throw new ConcurrentModificationException();
+            return !s.isEmpty() || runner != null;
+        }
+
+        @Override
+        public Key next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            while(runner != null){
+                s.push(runner);
+                runner = runner.left;
+            }
+            runner = s.pop();
+            Key ret = runner.key;
+            runner = runner.right;
+            return ret;
         }
     }
 
@@ -190,6 +240,15 @@ public class BinarySearchTreeIterator<Key extends Comparable<Key>> implements It
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        BinarySearchTreeIterator<Integer> tree = new BinarySearchTreeIterator<>();
+        int[] values = new int[]{12, 8, 18, 3, 11, 14, 20, 9, 15};
+        for (int v : values) {
+            tree.put(v);
+        }
+        System.out.println(tree.leastKey(18));
     }
 }
 

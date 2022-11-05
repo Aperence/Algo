@@ -1,4 +1,4 @@
-package strings;
+package searching;
 
 public class LinearProbingHashST<Key, Value> {
     private static final int INIT_CAPACITY = 4;

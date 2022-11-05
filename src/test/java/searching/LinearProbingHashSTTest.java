@@ -1,6 +1,7 @@
-package strings;
+package searching;
 
 import org.junit.Test;
+import searching.LinearProbingHashST;
 
 import java.util.HashSet;
 import java.util.HashMap;
