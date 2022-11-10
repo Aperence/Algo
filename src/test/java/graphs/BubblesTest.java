@@ -148,6 +148,8 @@ public class BubblesTest {
         List<ForbiddenRelation> frs = Bubbles.cleanBubbles(ccontacts, BSIZE);
         Collections.sort(frs);
 
+        System.out.println(frs.size());
+
         for (ForbiddenRelation fr : frs) {
             int a = Integer.parseInt(fr.a);
             int b = Integer.parseInt(fr.b);

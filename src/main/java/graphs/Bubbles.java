@@ -1,7 +1,7 @@
 package graphs;
 
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Sophie and Marc want to reduce the bubbles of contacts in the belgian population
@@ -58,9 +58,107 @@ import java.util.List;
  */
 public class Bubbles {
 
+    private static void update(HashMap<String, Integer> map, String s){
+        map.putIfAbsent(s, 0);
+        map.replace(s, map.get(s) + 1);
+    }
+
+    private static class Node implements Comparable{
+        Contact c;
+        int weight_a;
+        int weight_b;
+
+        Node(Contact c, int i, int j){
+            this.c = c;
+            weight_a = i;
+            weight_b = j;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            Node n = (Node) o;
+            return n.weight_a + n.weight_b - weight_a - weight_b;
+        }
+    }
+
     public static List<ForbiddenRelation> cleanBubbles(List<Contact> contacts, int n) {
-        // TODO
-         return null;
+
+        Set<Contact> uniq = new HashSet<>(contacts);
+        List<ForbiddenRelation> ret = new LinkedList<>();
+        HashMap<String, Integer> counts = new HashMap<>();
+        for (Contact c : uniq){
+            update(counts, c.a);
+            update(counts, c.b);
+        }
+        PriorityQueue<Node> pq = new PriorityQueue<Node>();
+        for (Contact c : uniq){
+            pq.add(new Node(c, counts.get(c.a), counts.get(c.b)));
+        }
+        while (true){
+            Node node = pq.remove();
+            int count_a = counts.get(node.c.a);
+            int count_b = counts.get(node.c.b);
+            if (node.weight_b != count_b || node.weight_a != count_a){
+                pq.add(new Node(node.c, count_a, count_b));
+                continue;
+            }
+            if (node.weight_a <= n && node.weight_b <= n)
+                break;
+            ret.add(new ForbiddenRelation(node.c.a, node.c.b));
+            counts.replace(node.c.a, count_a - 1);
+            counts.replace(node.c.b, count_b - 1);
+        }
+        while (!pq.isEmpty()){
+            Node node = pq.remove();
+            int count_a = counts.get(node.c.a);
+            int count_b = counts.get(node.c.b);
+            if (node.weight_b != count_b || node.weight_a != count_a){
+                pq.add(new Node(node.c, count_a, count_b));
+                continue;
+            }
+            if (node.weight_b <= n && node.weight_a <= n)
+                continue;
+            ret.add(new ForbiddenRelation(node.c.a, node.c.b));
+            counts.replace(node.c.a, count_a - 1);
+            counts.replace(node.c.b, count_b - 1);
+        }
+
+        return ret;
+
+    }
+
+    public static List<ForbiddenRelation> cleanBubblesSol(List<Contact> contacts, int n) {
+
+        HashMap<String, HashSet<String>> relations = new HashMap<>();
+
+        for (Contact c : contacts){
+            relations.putIfAbsent(c.a, new HashSet<>());
+            relations.get(c.a).add(c.b);
+            relations.putIfAbsent(c.b, new HashSet<>());
+            relations.get(c.b).add(c.a);
+        }
+
+        List<ForbiddenRelation> ret = new LinkedList<>();
+
+        for (Contact c : contacts){
+            if (!relations.get(c.a).contains(c.b)) continue;
+            if (relations.get(c.a).size() > n && relations.get(c.b).size() > n){
+                ret.add(new ForbiddenRelation(c.a, c.b));
+                relations.get(c.a).remove(c.b);
+                relations.get(c.b).remove(c.a);
+            }
+        }
+
+        for (Contact c : contacts){
+            if (!relations.get(c.a).contains(c.b)) continue;
+            if (relations.get(c.a).size() > n || relations.get(c.b).size() > n){
+                ret.add(new ForbiddenRelation(c.a, c.b));
+                relations.get(c.a).remove(c.b);
+                relations.get(c.b).remove(c.a);
+            }
+        }
+
+        return ret;
     }
 
 }
@@ -80,6 +178,19 @@ class Contact {
             this.a = a;
             this.b = b;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return Objects.equals(a, contact.a) && Objects.equals(b, contact.b);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(a, b);
     }
 }
 
