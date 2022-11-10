@@ -41,19 +41,19 @@ public class SkyLines {
         }
 
         Integer start = null;
-        int total_height = 0;
 
         TreeMap<Integer, Integer> counts = new TreeMap<>();
         for (Map.Entry<Integer, LinkedList<Integer>> e: tree.entrySet()) {
             int index = e.getKey();
             for (int height : e.getValue()) {
-                total_height += height;
                 if (start == null){
                     start = e.getKey();
                     put(counts, height);
                     continue;
                 }
-                if (total_height == 0){
+                // if there is only one height left, with a count of 1 and height is negative
+                // => remove the last height => end of building
+                if (counts.size() == 1 && counts.get(getMax(counts)) == 1 && height < 0){
                     ret.add(new Interval(start, index, removeMax(counts)));
                     start = null;
                     continue;
