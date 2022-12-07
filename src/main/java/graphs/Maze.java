@@ -16,71 +16,49 @@ import java.util.*;
  */
 public class Maze {
 
-    public static class Node implements Comparable{
-        int dist;
+    static class Node{
         int x;
         int y;
         Node parent;
 
-        Node(int x, int y, int d, Node p){this.x = x; this.y = y;dist = d; parent = p;}
-
-        public boolean isTarget(int x, int y){
-            return this.x == x && this.y==y;
-        }
-
-        @Override
-        public int compareTo(Object o) {
-            return dist - ((Node) o).dist;
+        Node(int x, int y, Node parent){
+            this.x = x;
+            this.y = y;
+            this.parent = parent;
         }
     }
 
-    public static boolean inLimit(int x, int lower, int upper){
-        return x >= lower && x < upper;
-    }
     public static Iterable<Integer> shortestPath(int[][] maze, int x1, int y1, int x2, int y2) {
-        // dijkstra implementation
-        int N = maze.length;
-        int M = maze[0].length;
-        if (!inLimit(x1, 0, N)
-                || !inLimit(x2, 0, N)
-                || !inLimit(y1, 0, M)
-                || !inLimit(y2, 0, M)
-                || maze[x1][y1] == 1 || maze[x2][y2] == 1) return new LinkedList<>();
-        PriorityQueue<Node> pq = new PriorityQueue<>();
-        pq.add(new Node(x1, y1, 0, null));
-        boolean[] marked = new boolean[N*M];
-        while (!pq.isEmpty()){
-            Node n = pq.remove();
-            if (n.isTarget(x2, y2)){
-                LinkedList<Integer> ret = new LinkedList<>();
-                while (n != null){
-                    ret.addFirst(ind(n.x, n.y, M));
-                    n = n.parent;
+        int n = maze.length;
+        int m = maze[0].length;
+        if (x1 < 0 || x1 >= n || y1 < 0 || y1 >= m || maze[x1][y1] != 0) return new LinkedList<>();
+        if (x2 < 0 || x2 >= n || y1 < 0 || y2 >= m || maze[x2][y2] != 0) return new LinkedList<>();
+        boolean[] visited = new boolean[n*m];
+        Queue<Node> q = new ArrayDeque<>();
+        q.add(new Node(x1, y1, null));
+        LinkedList<Integer> ret = new LinkedList<>();
+        while(!q.isEmpty()){
+            Node temp = q.remove();
+            int x = temp.x;
+            int y = temp.y;
+            if (x < 0 || x >= n) continue;
+            if (y < 0 || y >= m) continue;
+            if (maze[x][y] != 0) continue;
+            if (visited[ind(x, y, m)]) continue;
+            visited[ind(x, y, m)] = true;
+            if (x == x2 && y == y2){
+                while(temp != null){
+                    ret.addFirst(ind(temp.x, temp.y, m));
+                    temp = temp.parent;
                 }
                 return ret;
             }
-            if (marked[ind(n.x, n.y, M)]) continue;
-            marked[ind(n.x, n.y, M)] = true;
-
-            int newX = n.x + 1;
-            if (newX >=0 && newX < N && maze[newX][n.y] != 1)
-                pq.add(new Node(newX, n.y, n.dist + 1, n));
-
-            newX = n.x - 1;
-            if (newX >=0 && newX < N && maze[newX][n.y] != 1)
-                pq.add(new Node(newX, n.y, n.dist + 1, n));
-
-
-            int newY = n.y + 1;
-            if (newY >= 0 && newY < M && maze[n.x][newY] != 1)
-                pq.add(new Node(n.x, newY, n.dist + 1, n));
-
-            newY = n.y - 1;
-            if (newY >= 0 && newY < M && maze[n.x][newY] != 1)
-                pq.add(new Node(n.x, newY, n.dist + 1, n));
-
+            q.add(new Node(x-1, y, temp));
+            q.add(new Node(x, y-1, temp));
+            q.add(new Node(x+1, y, temp));
+            q.add(new Node(x, y+1, temp));
         }
-        return new LinkedList<>();
+        return ret;
     }
 
     public static int ind(int x, int y, int lg) {
@@ -110,7 +88,7 @@ public class Maze {
                 {0, 0, 0, 0, 1, 0, 0}
         };
 
-        for (int w : shortestPath(maze1, 1, 0, 6, 0)){
+        for (int w : shortestPath(maze1, 0, 0, 6, 0)){
             System.out.println(row(w, maze1[0].length) + "," + col(w, maze1[0].length));
         }
     }

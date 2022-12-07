@@ -96,7 +96,7 @@ public class AStar{
                 {1, 1, 0, 0, 1, 0, 0},
                 {0, 0, 0, 0, 1, 0, 0}
         };
-        for (int w : shortestPath(maze1, 2, 3, 4, 3)){
+        for (int w : shortestPath(maze1, 0, 0, 6, 0)){
             System.out.println(row(w, maze1[0].length) + "," + col(w, maze1[0].length));
         }
     }

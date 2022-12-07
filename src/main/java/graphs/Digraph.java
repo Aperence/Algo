@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *Implement the Digraph.java interface in the Digraph.java class using an adjacency list
+ *Implement the DigraphImpl.java interface in the DigraphImpl.java class using an adjacency list
  * data structure to represent directed graphs.
  */
 public class Digraph {
