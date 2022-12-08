@@ -10,14 +10,14 @@ public class PrimAlgorithm {
     DirectedEdges[] parent;
     int[] dist;
 
-    PrimAlgorithm(DigraphImpl g, int source){
+    PrimAlgorithm(WeightedDigraph g, int source){
         visited = new boolean[g.V()];
         parent = new DirectedEdges[g.V()];
         dist = new int[g.V()];
         primLoop(g, source);
     }
 
-    void primLoop(DigraphImpl g, int v){
+    void primLoop(WeightedDigraph g, int v){
         for (int i = 0; i < g.V(); i++) {
             dist[i] = Integer.MAX_VALUE;
         }
@@ -36,9 +36,9 @@ public class PrimAlgorithm {
         }
     }
 
-    void relax(DigraphImpl g, int v, PriorityQueue<DirectedEdges> pq){
+    void relax(WeightedDigraph g, int v, PriorityQueue<DirectedEdges> pq){
         visited[v] = true;
-        for (DirectedEdges d : g.adj2(v)){
+        for (DirectedEdges d : g.adj(v)){
             int other = d.to() == v ? d.from() : d.to();
             if (dist[v] + d.weight < dist[other]){
                 dist[other] = dist[v] + d.weight;
@@ -53,7 +53,7 @@ public class PrimAlgorithm {
     }
 
     public static void main(String[] args) {
-        DigraphImpl g = new DigraphImpl(4);
+        WeightedDigraph g = new WeightedDigraph(4);
 
         g.addEdgeWeight(0, 3, 12);
         g.addEdgeWeight(0 , 2, 5);

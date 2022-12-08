@@ -1,15 +1,13 @@
 package graph_supp;
 
-import utils.Digraph;
-
 import java.util.*;
 
-public class DigraphImpl implements Digraph{
+public class WeightedDigraph{
 
     List<DirectedEdges>[] vertices;
     int n_edges;
 
-    DigraphImpl(int N){
+    WeightedDigraph(int N){
         vertices = new List[N];
         for (int i = 0; i < N; i++) {
             vertices[i]= new LinkedList<>();
@@ -34,32 +32,22 @@ public class DigraphImpl implements Digraph{
     /**
      * Add the edge v->w
      */
-    public void addEdge(int v, int w){
-        addEdgeWeight(v, w, 1);
-    }
-
     public void addEdgeWeight(int v, int w, int weight){
         vertices[v].add(new DirectedEdges(v, w, weight));
     }
 
-    /**
-     * The nodes adjacent to edge v
-     */
-    public Iterable<Integer> adj(int v){
-        return null;
-    }
 
-    public Iterable<DirectedEdges> adj2(int v){
+    public Iterable<DirectedEdges> adj(int v){
         return vertices[v];
     }
 
     /**
      * A copy of the digraph with all edges reversed
      */
-    public utils.Digraph reverse(){
-        DigraphImpl ret = new DigraphImpl(V());
+    public WeightedDigraph reverse(){
+        WeightedDigraph ret = new WeightedDigraph(V());
         for (int i = 0; i < V(); i++) {
-            for (DirectedEdges d : adj2(i)){
+            for (DirectedEdges d : adj(i)){
                 ret.addEdgeWeight(d.to, d.from, d.weight);
             }
         }
