@@ -40,7 +40,11 @@ class DoubleLinkedList<K, V>{
     public NodeHistory<K, V> removeOldest(){
         NodeHistory<K, V> ret = first;
         first = first.next;
-        first.prev = null;
+        if (first == null){
+           last = null;
+        }else{
+           first.prev = null;
+        }
 
         return ret;
     }
